@@ -6,10 +6,11 @@ export const DemoRoleBar: React.FC = () => {
   const { user, quickSwitchUser } = useAuth();
 
   const accounts = [
-    { label: 'Super Admin (Marcus)', email: 'admin@sovereign.club', role: 'SUPER_ADMIN' },
-    { label: 'Organizer (David)', email: 'organizer@sovereign.club', role: 'ORGANIZER' },
-    { label: 'Mentor (James)', email: 'mentor@sovereign.club', role: 'MENTOR' },
-    { label: 'Finance (Ethan)', email: 'finance@sovereign.club', role: 'FINANCE_MANAGER' },
+    { label: 'Council Architect (Habtsh)', email: 'pr/habtemariam/0001', role: 'SUPER_ADMIN' },
+    { label: 'Club Founder (Eyob Haile)', email: 'admin@sovereign.club', role: 'SUPER_ADMIN' },
+    { label: 'Organizer (Dawit)', email: 'organizer@sovereign.club', role: 'ORGANIZER' },
+    { label: 'Mentor (Yonas)', email: 'mentor@sovereign.club', role: 'MENTOR' },
+    { label: 'Finance (Henok)', email: 'finance@sovereign.club', role: 'FINANCE_MANAGER' },
     { label: 'Brother (Alex)', email: 'alex@sovereign.club', role: 'MEMBER' },
   ];
 

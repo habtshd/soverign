@@ -110,8 +110,8 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
           >
             Sovereign Men's Club
           </h1>
-          <p style={{ color: 'var(--text-gold)', fontSize: '0.85rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '4px' }}>
-            Digital Community Operating System
+          <p style={{ color: 'var(--text-gold)', fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px', fontWeight: 600 }}>
+            Build The Man • Carry The Responsibility • Lead With Purpose
           </p>
         </div>
 
@@ -144,11 +144,11 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
               )}
 
               <div className="form-group">
-                <label className="form-label">Sovereign Email</label>
+                <label className="form-label">Sovereign Identifier / Member ID / Email</label>
                 <input
-                  type="email"
+                  type="text"
                   className="form-input"
-                  placeholder="admin@sovereign.club or alex@sovereign.club"
+                  placeholder="Member ID (e.g. pr/habtemariam/0001, SOV-001) or Email"
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
@@ -172,7 +172,7 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
               </button>
 
               <div style={{ marginTop: '20px', padding: '12px', background: 'var(--bg-primary)', borderRadius: '6px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                <strong>Demo Passwords:</strong> <code>Password123!</code> for <code>admin@sovereign.club</code>, <code>alex@sovereign.club</code>, <code>mentor@sovereign.club</code>
+                <strong>Member Credentials:</strong> Use your Member ID (e.g. <code>pr/habtemariam/0001</code>, <code>SOV-001</code>) or email with password <code>Password123!</code>
               </div>
             </form>
           ) : (

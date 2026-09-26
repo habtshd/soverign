@@ -53,9 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshUser();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (identifier: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    const res = await api.auth.login({ email, password });
+    const res = await api.auth.login({ identifier, password });
     setIsLoading(false);
 
     if (res.success && res.data?.token) {

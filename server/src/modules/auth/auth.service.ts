@@ -8,9 +8,18 @@ const JWT_SECRET = process.env.JWT_SECRET || 'sovereign_secret_key_default';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export class AuthService {
-  static async login(email: string, password: string, ipAddress?: string, userAgent?: string) {
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+  static async login(identifier: string, password: string, ipAddress?: string, userAgent?: string) {
+    const cleanId = identifier.trim();
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: cleanId.toLowerCase() },
+          { member: { memberNumber: cleanId } },
+          { member: { digitalIdCode: cleanId } },
+          { member: { profile: { telegramHandle: cleanId } } },
+          { member: { profile: { telegramHandle: `@${cleanId}` } } },
+        ],
+      },
       include: {
         roles: {
           include: {
@@ -38,14 +47,14 @@ export class AuthService {
     if (!user) {
       await prisma.loginActivity.create({
         data: {
-          email,
+          email: cleanId,
           status: 'FAILED',
-          message: 'Invalid email or user not found',
+          message: 'User/Member ID not found',
           ipAddress,
           userAgent,
         },
       });
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError('Invalid Member ID or password', 401);
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
@@ -53,14 +62,14 @@ export class AuthService {
       await prisma.loginActivity.create({
         data: {
           userId: user.id,
-          email,
+          email: user.email,
           status: 'FAILED',
           message: 'Invalid password',
           ipAddress,
           userAgent,
         },
       });
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError('Invalid credentials', 401);
     }
 
     if (user.status !== 'ACTIVE') {
@@ -71,7 +80,7 @@ export class AuthService {
     await prisma.loginActivity.create({
       data: {
         userId: user.id,
-        email,
+        email: user.email,
         status: 'SUCCESS',
         message: 'Login successful',
         ipAddress,

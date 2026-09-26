@@ -7,8 +7,9 @@ export class AuthController {
     try {
       const validated = loginSchema.parse(req.body);
       const ipAddress = req.ip || req.socket.remoteAddress;
-      const userAgent = req.headers['user-agent'];
-      const result = await AuthService.login(validated.email, validated.password, ipAddress, userAgent);
+      const userAgent = req.headers['user-agent'] as string | undefined;
+      const identifier = validated.identifier || validated.email!;
+      const result = await AuthService.login(identifier, validated.password, ipAddress, userAgent);
       return res.json({ success: true, data: result });
     } catch (error) {
       next(error);

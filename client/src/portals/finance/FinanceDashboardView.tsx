@@ -194,7 +194,7 @@ export const FinanceDashboardView: React.FC = () => {
                     </td>
                     <td style={{ fontWeight: 700, color: '#f87171' }}>-${exp.amount}</td>
                     <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {exp.approvedBy ? `${exp.approvedBy.firstName} ${exp.approvedBy.lastName}` : 'Marcus Vance'}
+                      {exp.approvedBy ? `${exp.approvedBy.firstName} ${exp.approvedBy.lastName}` : 'Eyob Haile'}
                     </td>
                   </tr>
                 ))}

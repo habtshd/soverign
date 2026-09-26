@@ -51,8 +51,14 @@ function buildQuery(params?: Record<string, any>) {
 export const api = {
   // Auth
   auth: {
-    login: (credentials: { email: string; password: string }) =>
-      apiRequest('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
+    login: (credentials: { identifier?: string; email?: string; password: string }) =>
+      apiRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: credentials.identifier || credentials.email,
+          password: credentials.password,
+        }),
+      }),
     register: (data: any) =>
       apiRequest('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
     getMe: () => apiRequest('/auth/me'),
