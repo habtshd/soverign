@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext.js';
+import { ThemeProvider } from './context/ThemeContext.js';
 import { DemoRoleBar } from './components/layout/DemoRoleBar.js';
 import { Sidebar } from './components/layout/Sidebar.js';
 import { TopNav } from './components/layout/TopNav.js';
@@ -159,8 +160,10 @@ export const AppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

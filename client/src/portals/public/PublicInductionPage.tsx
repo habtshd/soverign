@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.js';
 import { api } from '../../api/client.js';
 import { Shield, Check, ArrowRight } from 'lucide-react';
+import { ThemeToggle } from '../../components/layout/ThemeToggle.js';
 
 interface PublicInductionPageProps {
   onSuccess: () => void;
@@ -77,9 +78,15 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
         alignItems: 'center',
         justifyContent: 'center',
         padding: '32px 16px',
-        background: 'radial-gradient(circle at 50% 20%, rgba(201, 151, 56, 0.12) 0%, transparent 60%), #090a0f',
+        background: 'radial-gradient(circle at 50% 20%, rgba(201, 151, 56, 0.12) 0%, transparent 60%), var(--bg-primary)',
+        position: 'relative',
       }}
     >
+      {/* Floating Theme Switcher */}
+      <div style={{ position: 'absolute', top: '24px', right: '24px' }}>
+        <ThemeToggle />
+      </div>
+
       <div style={{ width: '100%', maxWidth: '520px' }}>
         {/* Brand Crest */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -103,7 +110,7 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
               fontFamily: 'var(--font-serif)',
               fontSize: '1.9rem',
               fontWeight: 800,
-              color: '#fff',
+              color: 'var(--text-main)',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
             }}

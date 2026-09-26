@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth, PortalType } from '../../context/AuthContext.js';
 import { api } from '../../api/client.js';
 import { Bell, Search, Check, ShieldAlert } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle.js';
 
 interface TopNavProps {
   onSearch?: (query: string) => void;
@@ -123,6 +124,9 @@ export const TopNav: React.FC<TopNavProps> = () => {
 
       {/* Right Actions */}
       <div className="topbar-actions">
+        {/* Dark / Light Mode Switcher */}
+        <ThemeToggle />
+
         <span className="role-badge">
           {activePortal} VIEW • {user?.roles?.[0] || 'GUEST'}
         </span>
