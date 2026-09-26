@@ -731,6 +731,54 @@ body {
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
+.digital-card-brand-title {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.digital-card-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.digital-card-council-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.digital-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+}
+
+.digital-card-qr-btn {
+  background: rgba(201, 151, 56, 0.15);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--gold-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.digital-card-qr-btn:hover {
+  background: rgba(201, 151, 56, 0.25);
+  transform: scale(1.05);
+}
+
 /* Demo Role Banner */
 .demo-banner {
   background: rgba(201, 151, 56, 0.08);
@@ -985,4 +1033,66 @@ body {
 [data-theme="light"] [style*="background: var(--bg-primary)"],
 [data-theme="light"] [style*="background:var(--bg-primary)"] {
   background: var(--bg-tertiary) !important;
+}
+
+/* Sovereign Light Mode: Luxury Porcelain & Burnished Gold Member Card */
+[data-theme="light"] .digital-card {
+  background: linear-gradient(145deg, #ffffff 0%, #fafbfe 50%, #eff3f9 100%) !important;
+  border: 2px solid #c99738 !important;
+  box-shadow: 0 16px 36px rgba(184, 134, 11, 0.18), 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .digital-card::before {
+  background: radial-gradient(circle, rgba(201, 151, 56, 0.1) 0%, transparent 60%) !important;
+}
+
+[data-theme="light"] .digital-card-chip {
+  background: linear-gradient(135deg, #e5b869 0%, #c99738 50%, #9e700a 100%) !important;
+  border: 1px solid rgba(184, 134, 11, 0.4) !important;
+  box-shadow: 0 2px 6px rgba(184, 134, 11, 0.25) !important;
+}
+
+[data-theme="light"] .digital-card-number {
+  color: #9e700a !important;
+  text-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .digital-card-brand-title {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .digital-card-name {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .digital-card-sub {
+  color: #9e700a !important;
+}
+
+[data-theme="light"] .digital-card-council-badge {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="light"] .digital-card-footer {
+  border-top: 1px solid rgba(184, 134, 11, 0.22) !important;
+}
+
+[data-theme="light"] .digital-card-qr-btn {
+  background: rgba(184, 134, 11, 0.12) !important;
+  border: 1px solid rgba(184, 134, 11, 0.35) !important;
+  color: #9e700a !important;
+}
+
+[data-theme="light"] .digital-card-qr-btn:hover {
+  background: rgba(184, 134, 11, 0.22) !important;
+  color: #7d5910 !important;
+}
+
+[data-theme="light"] .digital-card-qr-drawer {
+  background: #ffffff !important;
+  border: 1px solid var(--border-gold) !important;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1) !important;
 }

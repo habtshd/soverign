@@ -381,7 +381,7 @@ async function main() {
   });
 
   // 4. Mentorship Match
-  const mentorProfileRecord = await prisma.mentorProfile.findFirst({
+  const mentorProfileRecord = await prisma.mentor.findFirst({
     where: { member: { user: { email: 'mentor@sovereign.club' } } },
   });
 

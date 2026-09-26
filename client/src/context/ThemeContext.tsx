@@ -16,7 +16,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
-    return 'dark'; // Default to Sovereign Obsidian Dark theme
+    return 'light'; // Default to Sovereign White Mode as requested
   });
 
   useEffect(() => {

@@ -37,21 +37,12 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Shield size={18} color="#d4af37" />
-              <span
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: '0.85rem',
-                  letterSpacing: '0.12em',
-                  color: '#fff',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                }}
-              >
+              <Shield size={18} color="var(--gold-400)" />
+              <span className="digital-card-brand-title">
                 Sovereign Men's Club
               </span>
             </div>
-            <div style={{ fontSize: '0.68rem', color: 'var(--text-gold)', letterSpacing: '0.1em', marginTop: '2px' }}>
+            <div className="digital-card-sub" style={{ fontSize: '0.68rem', color: 'var(--text-gold)', letterSpacing: '0.1em', marginTop: '2px', fontWeight: 600 }}>
               OPERATIONAL CREDENTIAL
             </div>
           </div>
@@ -61,20 +52,12 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
         {/* Center: Member Number & Name */}
         <div>
           <div className="digital-card-number">{memberNumber || 'SOV-000'}</div>
-          <div
-            style={{
-              fontSize: '1.25rem',
-              fontWeight: 700,
-              color: '#fff',
-              marginTop: '4px',
-              letterSpacing: '0.04em',
-            }}
-          >
+          <div className="digital-card-name">
             {name}
           </div>
           <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <span className="badge badge-gold">{tier}</span>
-            <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: '#fff' }}>
+            <span className="badge digital-card-council-badge">
               <Award size={12} style={{ marginRight: '3px' }} />
               {badgeTier.replace('_', ' ')}
             </span>
@@ -82,15 +65,7 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
         </div>
 
         {/* Bottom Footer */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            borderTop: '1px solid rgba(255,255,255,0.1)',
-            paddingTop: '10px',
-          }}
-        >
+        <div className="digital-card-footer">
           <div>
             <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
               Verified Status
@@ -112,17 +87,7 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
 
           <button
             onClick={() => setShowQR(!showQR)}
-            style={{
-              background: 'rgba(201, 151, 56, 0.15)',
-              border: '1px solid var(--border-gold)',
-              borderRadius: '8px',
-              padding: '6px',
-              cursor: 'pointer',
-              color: 'var(--gold-400)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+            className="digital-card-qr-btn"
             title="Scan / Show Check-in QR"
           >
             <QrCode size={20} />
@@ -133,6 +98,7 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
       {/* QR Code Inspection Drawer */}
       {showQR && (
         <div
+          className="digital-card-qr-drawer"
           style={{
             marginTop: '16px',
             background: 'var(--bg-card)',
@@ -143,7 +109,7 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
             boxShadow: 'var(--gold-glow)',
           }}
         >
-          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', marginBottom: '12px' }}>
+          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '12px' }}>
             Official Check-in QR Code
           </div>
           <div
