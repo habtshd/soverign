@@ -88,6 +88,7 @@ async function main() {
       firstName: 'Eyob',
       lastName: 'Haile',
       phone: '+251 91 123 4567',
+      avatarUrl: null,
     },
     create: {
       email: 'admin@sovereign.club',
@@ -95,7 +96,7 @@ async function main() {
       firstName: 'Eyob',
       lastName: 'Haile',
       phone: '+251 91 123 4567',
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [
@@ -137,6 +138,7 @@ async function main() {
       firstName: 'Habtemariam',
       lastName: 'Delelew',
       phone: '+251 91 777 0001',
+      avatarUrl: null,
     },
     create: {
       email: 'habtemariam@sovereign.club',
@@ -144,7 +146,7 @@ async function main() {
       firstName: 'Habtemariam',
       lastName: 'Delelew',
       phone: '+251 91 777 0001',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [
@@ -185,6 +187,7 @@ async function main() {
     update: {
       firstName: 'Dawit',
       lastName: 'Tadesse',
+      avatarUrl: null,
     },
     create: {
       email: 'organizer@sovereign.club',
@@ -192,7 +195,7 @@ async function main() {
       firstName: 'Dawit',
       lastName: 'Tadesse',
       phone: '+251 91 345 6789',
-      avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [
@@ -232,6 +235,7 @@ async function main() {
     update: {
       firstName: 'Yonas',
       lastName: 'Kassa',
+      avatarUrl: null,
     },
     create: {
       email: 'mentor@sovereign.club',
@@ -239,7 +243,7 @@ async function main() {
       firstName: 'Yonas',
       lastName: 'Kassa',
       phone: '+251 91 456 7890',
-      avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [
@@ -289,6 +293,7 @@ async function main() {
     update: {
       firstName: 'Henok',
       lastName: 'Solomon',
+      avatarUrl: null,
     },
     create: {
       email: 'finance@sovereign.club',
@@ -296,7 +301,7 @@ async function main() {
       firstName: 'Henok',
       lastName: 'Solomon',
       phone: '+251 91 567 8901',
-      avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [
@@ -335,6 +340,7 @@ async function main() {
     update: {
       firstName: 'Alex',
       lastName: 'Mercer',
+      avatarUrl: null,
     },
     create: {
       email: 'alex@sovereign.club',
@@ -342,7 +348,7 @@ async function main() {
       firstName: 'Alex',
       lastName: 'Mercer',
       phone: '+251 91 678 9012',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face',
+      avatarUrl: null,
       status: 'ACTIVE',
       roles: {
         create: [{ roleId: memberRole.id }],
@@ -544,7 +550,7 @@ async function main() {
         capacity: 150,
         registeredCount: 68,
         status: 'PUBLISHED',
-        coverImage: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&fit=crop',
+        coverImage: null,
         telegramBroadcasted: true,
       },
     });
@@ -561,7 +567,7 @@ async function main() {
         capacity: 80,
         registeredCount: 45,
         status: 'PUBLISHED',
-        coverImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&fit=crop',
+        coverImage: null,
         telegramBroadcasted: true,
       },
     });
@@ -578,7 +584,7 @@ async function main() {
         capacity: 100,
         registeredCount: 72,
         status: 'PUBLISHED',
-        coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&fit=crop',
+        coverImage: null,
         telegramBroadcasted: true,
       },
     });
@@ -622,7 +628,7 @@ async function main() {
         category: 'Leadership & Duty',
         level: 'FOUNDATION',
         instructor: 'Eyob Haile',
-        coverImage: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&fit=crop',
+        coverImage: null,
         modulesCount: 2,
         modules: {
           create: [
@@ -673,7 +679,7 @@ async function main() {
         category: 'Finance & Business',
         level: 'INTERMEDIATE',
         instructor: 'Yonas Kassa & Henok Solomon',
-        coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&fit=crop',
+        coverImage: null,
         modulesCount: 1,
         modules: {
           create: [
@@ -707,7 +713,7 @@ async function main() {
           author: 'Marcus Aurelius',
           category: 'Philosophy & Stoicism',
           description: 'The definitive reflections on duty, resilience, and sovereign self-mastery.',
-          coverImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&fit=crop',
+          coverImage: null,
           link: 'https://sovereign.club/books/meditations',
         },
         {
@@ -715,7 +721,7 @@ async function main() {
           author: 'James Dale Davidson & Lord William Rees-Mogg',
           category: 'Wealth & Autonomy',
           description: 'Mastering the transition to the information age, personal autonomy, and sovereign capital.',
-          coverImage: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777f?w=400&fit=crop',
+          coverImage: null,
           link: 'https://sovereign.club/books/sovereign-individual',
         },
       ],
@@ -754,7 +760,7 @@ async function main() {
         difficulty: 'BEAST',
         durationWeeks: 6,
         instructor: 'Dawit Tadesse',
-        coverImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&fit=crop',
+        coverImage: null,
         workoutPlans: {
           create: [
             { dayOfWeek: 1, title: 'Day 1: Heavy Compound Strength & Pushups Ladder' },

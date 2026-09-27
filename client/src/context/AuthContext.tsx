@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../api/client.js';
 
-export type PortalType = 'MEMBER' | 'ADMIN' | 'MENTOR' | 'ORGANIZER' | 'FINANCE';
+export type PortalType = 'MEMBER' | 'MENTOR' | 'ORGANIZER' | 'ADMIN';
 
 interface AuthContextType {
   user: any | null;
@@ -65,8 +65,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (res.data.user.roles.includes('SUPER_ADMIN') || res.data.user.roles.includes('ADMIN')) {
         setActivePortal('ADMIN');
-      } else if (res.data.user.roles.includes('FINANCE_MANAGER')) {
-        setActivePortal('FINANCE');
       } else if (res.data.user.roles.includes('ORGANIZER')) {
         setActivePortal('ORGANIZER');
       } else if (res.data.user.roles.includes('MENTOR')) {

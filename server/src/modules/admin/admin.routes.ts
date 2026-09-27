@@ -14,4 +14,16 @@ router.get('/settings', AdminController.getSettings);
 router.post('/settings', AdminController.updateSetting);
 router.get('/search', AdminController.search);
 
+// Users, Roles & Permissions
+router.get('/users', AdminController.getUsers);
+router.get('/roles', AdminController.getRoles);
+router.post('/users/:id/roles', AdminController.assignRoles);
+
+// Backups & System Snapshots
+router.post('/backup', AdminController.triggerBackup);
+
+// Operational Reports
+router.get('/reports', AdminController.getReports);
+
 export default router;
+

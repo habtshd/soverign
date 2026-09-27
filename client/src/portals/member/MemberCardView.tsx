@@ -49,7 +49,7 @@ export const MemberCardView: React.FC = () => {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Membership Tier</span>
-                <span style={{ color: '#fff', fontWeight: 600 }}>{member?.membershipType?.name}</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{member?.membershipType?.name}</span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
@@ -61,7 +61,7 @@ export const MemberCardView: React.FC = () => {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Induction Date</span>
-                <span style={{ color: '#fff' }}>
+                <span style={{ color: 'var(--text-main)' }}>
                   {member?.joinDate ? new Date(member.joinDate).toLocaleDateString() : 'Active Member'}
                 </span>
               </div>

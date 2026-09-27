@@ -79,32 +79,44 @@ export const AdminEventsView: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {events.map((e) => (
-              <tr key={e.id}>
-                <td>
-                  <div style={{ fontWeight: 700, color: '#fff' }}>{e.title}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Organizer: {e.organizer?.firstName} {e.organizer?.lastName}
-                  </div>
-                </td>
-                <td>
-                  <span className="badge badge-gold">{e.category?.name}</span>
-                </td>
-                <td>
-                  <div>{new Date(e.startTime).toLocaleDateString()}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {new Date(e.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </td>
-                <td>{e.location?.name || 'Sovereign Mountain Lodge'}</td>
-                <td>
-                  <strong>{e.registeredCount}</strong> / {e.capacity}
-                </td>
-                <td>
-                  <span className="badge badge-success">{e.status}</span>
-                </td>
-              </tr>
-            ))}
+            {events.map((e) => {
+              const locName = typeof e.location === 'object' && e.location !== null
+                ? (e.location.name || e.location.address || 'Sovereign Mountain Lodge')
+                : (typeof e.location === 'string' ? e.location : 'Sovereign Mountain Lodge');
+              const catName = typeof e.category === 'object' && e.category !== null
+                ? (e.category.name || 'Council Gathering')
+                : (typeof e.category === 'string' ? e.category : 'Council Gathering');
+              const regCount = e.registeredCount ?? e._count?.registrations ?? 0;
+
+              return (
+                <tr key={e.id}>
+                  <td>
+                    <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>{e.title}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Organizer: {e.organizer?.firstName || 'Council'} {e.organizer?.lastName || 'Lead'}
+                    </div>
+                  </td>
+                  <td>
+                    <span className="badge badge-gold">{catName}</span>
+                  </td>
+                  <td>
+                    <div style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+                      {e.startTime ? new Date(e.startTime).toLocaleDateString() : 'TBD'}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {e.startTime ? new Date(e.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                    </div>
+                  </td>
+                  <td style={{ color: 'var(--text-main)' }}>{locName}</td>
+                  <td>
+                    <strong style={{ color: 'var(--text-main)' }}>{regCount}</strong> / {e.capacity || 50}
+                  </td>
+                  <td>
+                    <span className="badge badge-success">{e.status || 'SCHEDULED'}</span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

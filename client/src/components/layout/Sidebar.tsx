@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext.js';
+import { Avatar } from '../common/Avatar.js';
 import {
   Shield,
   Home,
@@ -20,6 +21,15 @@ import {
   Lock,
   QrCode,
   LogOut,
+  Award,
+  Layers,
+  Settings,
+  Key,
+  BarChart2,
+  CheckSquare,
+  UserCheck,
+  Send,
+  TrendingUp,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,57 +45,85 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
       case 'ADMIN':
         return (
           <>
-            <div className="nav-section-title">Executive Command</div>
+            <div className="nav-section-title">Admin</div>
             <button
               className={`nav-item ${currentTab === 'admin-dashboard' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-dashboard')}
             >
               <LayoutDashboard className="nav-item-icon" />
-              <span>Executive Dashboard</span>
+              <span>Dashboard</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'admin-members' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-members')}
             >
               <Users className="nav-item-icon" />
-              <span>Member Directory</span>
+              <span>Members</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'admin-applications' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-applications')}
             >
               <FileText className="nav-item-icon" />
-              <span>Applications & Intake</span>
+              <span>Applications</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'admin-roles' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('admin-roles')}
+            >
+              <Key className="nav-item-icon" />
+              <span>Roles</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'admin-events' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-events')}
             >
               <Calendar className="nav-item-icon" />
-              <span>Event Operations</span>
+              <span>Events</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'admin-content' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('admin-content')}
+            >
+              <BookOpen className="nav-item-icon" />
+              <span>Content</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'admin-finance' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-finance')}
             >
               <DollarSign className="nav-item-icon" />
-              <span>Treasury & Ledger</span>
+              <span>Finance</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'admin-reports' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('admin-reports')}
+            >
+              <TrendingUp className="nav-item-icon" />
+              <span>Reports</span>
             </button>
 
-            <div className="nav-section-title">Systems & Governance</div>
+            <div className="nav-section-title">System</div>
             <button
               className={`nav-item ${currentTab === 'admin-integrations' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-integrations')}
             >
               <Workflow className="nav-item-icon" />
-              <span>Google & Telegram Sync</span>
+              <span>Integrations</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'admin-audit' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-audit')}
             >
               <Lock className="nav-item-icon" />
-              <span>Security & Audit Trail</span>
+              <span>Security</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'admin-settings' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('admin-settings')}
+            >
+              <Settings className="nav-item-icon" />
+              <span>Settings</span>
             </button>
           </>
         );
@@ -93,20 +131,48 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
       case 'MENTOR':
         return (
           <>
-            <div className="nav-section-title">Mentor Command</div>
+            <div className="nav-section-title">Mentor</div>
             <button
               className={`nav-item ${currentTab === 'mentor-mentees' ? 'active' : ''}`}
               onClick={() => setCurrentTab('mentor-mentees')}
             >
               <Users className="nav-item-icon" />
-              <span>Assigned Mentees</span>
+              <span>Mentees</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'mentor-matching' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('mentor-matching')}
+            >
+              <UserCheck className="nav-item-icon" />
+              <span>Matching</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'mentor-sessions' ? 'active' : ''}`}
               onClick={() => setCurrentTab('mentor-sessions')}
             >
               <Calendar className="nav-item-icon" />
-              <span>Mentorship Sessions</span>
+              <span>Sessions</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'mentor-goals' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('mentor-goals')}
+            >
+              <CheckSquare className="nav-item-icon" />
+              <span>Goals</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'mentor-communication' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('mentor-communication')}
+            >
+              <MessageSquare className="nav-item-icon" />
+              <span>Messages</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'mentor-reports' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('mentor-reports')}
+            >
+              <FileText className="nav-item-icon" />
+              <span>Reports</span>
             </button>
           </>
         );
@@ -114,41 +180,62 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
       case 'ORGANIZER':
         return (
           <>
-            <div className="nav-section-title">Organizer Command</div>
+            <div className="nav-section-title">Operations</div>
+            <button
+              className={`nav-item ${currentTab === 'organizer-dashboard' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-dashboard')}
+            >
+              <BarChart2 className="nav-item-icon" />
+              <span>Overview</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'organizer-programs' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-programs')}
+            >
+              <Layers className="nav-item-icon" />
+              <span>Programs</span>
+            </button>
             <button
               className={`nav-item ${currentTab === 'organizer-events' ? 'active' : ''}`}
               onClick={() => setCurrentTab('organizer-events')}
             >
               <Calendar className="nav-item-icon" />
-              <span>Manage Events</span>
+              <span>Events</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'organizer-checkin' ? 'active' : ''}`}
               onClick={() => setCurrentTab('organizer-checkin')}
             >
               <QrCode className="nav-item-icon" />
-              <span>QR Attendance Scanner</span>
-            </button>
-          </>
-        );
-
-      case 'FINANCE':
-        return (
-          <>
-            <div className="nav-section-title">Financial Control</div>
-            <button
-              className={`nav-item ${currentTab === 'finance-overview' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('finance-overview')}
-            >
-              <DollarSign className="nav-item-icon" />
-              <span>Treasury Overview</span>
+              <span>Check-in</span>
             </button>
             <button
-              className={`nav-item ${currentTab === 'finance-ledger' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('finance-ledger')}
+              className={`nav-item ${currentTab === 'organizer-challenges' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-challenges')}
             >
-              <FileText className="nav-item-icon" />
-              <span>Income & Expenses</span>
+              <Award className="nav-item-icon" />
+              <span>Challenges</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'organizer-projects' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-projects')}
+            >
+              <HeartHandshake className="nav-item-icon" />
+              <span>Projects</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'organizer-team' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-team')}
+            >
+              <Users className="nav-item-icon" />
+              <span>Team</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'organizer-reports' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('organizer-reports')}
+            >
+              <TrendingUp className="nav-item-icon" />
+              <span>Reports</span>
             </button>
           </>
         );
@@ -157,76 +244,83 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
       default:
         return (
           <>
-            <div className="nav-section-title">Brotherhood Hub</div>
+            <div className="nav-section-title">Brotherhood</div>
             <button
               className={`nav-item ${currentTab === 'member-home' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-home')}
             >
               <Home className="nav-item-icon" />
-              <span>Command Center</span>
+              <span>Overview</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-card' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-card')}
             >
               <CreditCard className="nav-item-icon" />
-              <span>Digital Member ID</span>
+              <span>Card</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-events' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-events')}
             >
               <Calendar className="nav-item-icon" />
-              <span>Events & Expeditions</span>
+              <span>Events</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-learning' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-learning')}
             >
               <BookOpen className="nav-item-icon" />
-              <span>Learning & Mastery</span>
-            </button>
-            <button
-              className={`nav-item ${currentTab === 'member-mentorship' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('member-mentorship')}
-            >
-              <Compass className="nav-item-icon" />
-              <span>Mentorship Track</span>
+              <span>Academy</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-fitness' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-fitness')}
             >
               <Activity className="nav-item-icon" />
-              <span>Fitness & Spartan Protocol</span>
+              <span>Fitness</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-business' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-business')}
             >
+              <DollarSign className="nav-item-icon" />
+              <span>Business</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'member-career' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('member-career')}
+            >
               <Briefcase className="nav-item-icon" />
-              <span>Capital & Opportunities</span>
+              <span>Career</span>
+            </button>
+            <button
+              className={`nav-item ${currentTab === 'member-mentorship' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('member-mentorship')}
+            >
+              <Compass className="nav-item-icon" />
+              <span>Mentorship</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-service' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-service')}
             >
               <HeartHandshake className="nav-item-icon" />
-              <span>Community Impact</span>
+              <span>Service</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-community' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-community')}
             >
               <MessageSquare className="nav-item-icon" />
-              <span>Brotherhood Feed</span>
+              <span>Community</span>
             </button>
             <button
               className={`nav-item ${currentTab === 'member-profile' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-profile')}
             >
               <User className="nav-item-icon" />
-              <span>My Profile</span>
+              <span>Profile</span>
             </button>
           </>
         );
@@ -236,61 +330,55 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
   return (
     <aside className="sidebar">
       {/* Brand Header */}
-      <div className="sidebar-header">
+      <div
+        className="sidebar-header"
+        onClick={() => setCurrentTab(activePortal === 'ADMIN' ? 'admin-dashboard' : 'member-home')}
+        title="Return to Home Dashboard"
+      >
         <div className="brand-crest">
-          <Shield size={20} color="#0b0d12" />
-        </div>
-        <div>
-          <div className="brand-title">Sovereign</div>
-          <div className="brand-subtitle">Men's Club OS</div>
+          <img src="/logo.png" alt="Sovereign Men's Club" className="logo-dark" />
+          <img src="/logo-light.png" alt="Sovereign Men's Club" className="logo-light" />
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="sidebar-nav">{renderNavItems()}</nav>
 
-      {/* User Footer */}
+      {/* User Footer Profile */}
       <div className="sidebar-footer">
-        <div className="user-snippet">
-          <img
-            src={
-              user?.avatarUrl ||
-              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
-            }
-            alt={user?.firstName || 'User'}
-            className="user-avatar"
+        <div className="sidebar-user">
+          <Avatar
+            firstName={user?.firstName}
+            lastName={user?.lastName}
+            size={34}
           />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: '#fff',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
+          <div className="sidebar-user-info">
+            <div className="sidebar-user-name">
               {user ? `${user.firstName} ${user.lastName}` : 'Guest Brother'}
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-gold)', textTransform: 'uppercase' }}>
-              {user?.roles?.[0] || 'GUEST'}
+            <div className="sidebar-user-role">
+              {user?.memberNumber || user?.roles?.[0] || 'VERIFIED'}
             </div>
           </div>
-          <button
-            onClick={logout}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              padding: '6px',
-            }}
-            title="Logout"
-          >
-            <LogOut size={16} />
-          </button>
         </div>
+
+        <button
+          onClick={logout}
+          className="btn-icon"
+          title="Sign Out"
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            padding: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <LogOut size={16} />
+        </button>
       </div>
     </aside>
   );

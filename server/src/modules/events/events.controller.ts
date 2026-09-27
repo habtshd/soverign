@@ -5,7 +5,8 @@ import { getParam } from '../../utils/params.js';
 export class EventsController {
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const events = await EventsService.getAllEvents(req.query);
+      const memberId = req.user?.memberId;
+      const events = await EventsService.getAllEvents(req.query, memberId);
       return res.json({ success: true, data: events });
     } catch (error) {
       next(error);

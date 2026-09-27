@@ -3,12 +3,15 @@ import { AppError } from '../../middleware/errorHandler.js';
 import { logAuditEvent } from '../../middleware/audit.js';
 
 export class EventsService {
-  static async getAllEvents(params: {
-    status?: string;
-    categoryId?: string;
-    upcomingOnly?: boolean;
-    search?: string;
-  }) {
+  static async getAllEvents(
+    params: {
+      status?: string;
+      categoryId?: string;
+      upcomingOnly?: boolean;
+      search?: string;
+    },
+    memberId?: string
+  ) {
     const where: any = {};
     if (params.status) {
       where.status = params.status;
@@ -28,7 +31,7 @@ export class EventsService {
       ];
     }
 
-    return prisma.event.findMany({
+    const events = await prisma.event.findMany({
       where,
       include: {
         category: true,
@@ -36,12 +39,19 @@ export class EventsService {
         organizer: {
           select: { firstName: true, lastName: true, avatarUrl: true },
         },
+        registrations: memberId ? { where: { memberId } } : false,
         _count: {
           select: { registrations: true, attendances: true },
         },
       },
       orderBy: { startTime: 'asc' },
     });
+
+    return events.map((e: any) => ({
+      ...e,
+      isRegistered: memberId ? (e.registrations?.length > 0) : false,
+      registeredCount: e._count?.registrations || 0,
+    }));
   }
 
   static async getEventById(eventId: string, memberId?: string) {

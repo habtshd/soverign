@@ -16,12 +16,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
-    return 'light'; // Default to Sovereign White Mode as requested
+    return 'dark'; // Executive Sovereign Obsidian Mode by default
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('sovereign_theme', theme);
+
+    // Synchronize browser tab favicon with active theme
+    const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (favicon) {
+      favicon.href = theme === 'light' ? '/logo-light.png' : '/logo.png';
+    }
   }, [theme]);
 
   const toggleTheme = () => {

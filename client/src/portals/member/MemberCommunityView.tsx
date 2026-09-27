@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
 import { useAuth } from '../../context/AuthContext.js';
+import { Avatar } from '../../components/common/Avatar.js';
 import { MessageSquare, ThumbsUp, Send, Flame } from 'lucide-react';
 
 export const MemberCommunityView: React.FC = () => {
@@ -73,10 +74,10 @@ export const MemberCommunityView: React.FC = () => {
           <div className="card">
             <form onSubmit={handleCreatePost}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <img
-                  src={user?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&fit=crop'}
-                  alt="Avatar"
-                  style={{ width: 42, height: 42, borderRadius: '50%', border: '1.5px solid var(--gold-500)', objectFit: 'cover' }}
+                <Avatar
+                  firstName={user?.firstName}
+                  lastName={user?.lastName}
+                  size={38}
                 />
                 <div style={{ flex: 1 }}>
                   <textarea
@@ -100,10 +101,10 @@ export const MemberCommunityView: React.FC = () => {
           {posts.map((post) => (
             <div key={post.id} className="card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <img
-                  src={post.author?.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&fit=crop'}
-                  alt="Author"
-                  style={{ width: 40, height: 40, borderRadius: '50%', border: '1px solid var(--gold-500)', objectFit: 'cover' }}
+                <Avatar
+                  firstName={post.author?.firstName}
+                  lastName={post.author?.lastName}
+                  size={36}
                 />
                 <div>
                   <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>

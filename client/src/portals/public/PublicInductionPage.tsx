@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.js';
 import { api } from '../../api/client.js';
-import { Shield, Check, ArrowRight } from 'lucide-react';
+import { 
+  Shield, 
+  ArrowRight, 
+  User, 
+  Lock, 
+  Mail, 
+  Eye, 
+  EyeOff, 
+  AlertCircle,
+  Loader2
+} from 'lucide-react';
 import { ThemeToggle } from '../../components/layout/ThemeToggle.js';
 
 interface PublicInductionPageProps {
@@ -16,12 +26,15 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
 
   // Register fields
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
+  const [showRegPassword, setShowRegPassword] = useState(false);
   const [phone, setPhone] = useState('');
   const [occupation, setOccupation] = useState('');
   const [city, setCity] = useState('');
@@ -33,11 +46,16 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
-    const success = await login(loginEmail, loginPassword);
-    if (success) {
-      onSuccess();
-    } else {
-      setLoginError('Invalid Sovereign credentials or inactive account.');
+    setLoggingIn(true);
+    try {
+      const success = await login(loginEmail, loginPassword);
+      if (success) {
+        onSuccess();
+      } else {
+        setLoginError('Invalid Sovereign identifier or password. Please verify credentials.');
+      }
+    } finally {
+      setLoggingIn(false);
     }
   };
 
@@ -71,71 +89,54 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '32px 16px',
-        background: 'radial-gradient(circle at 50% 20%, rgba(201, 151, 56, 0.12) 0%, transparent 60%), var(--bg-primary)',
-        position: 'relative',
-      }}
-    >
+    <div className="auth-page-container">
+      <div className="auth-ambient-glow" />
+
       {/* Floating Theme Switcher */}
-      <div style={{ position: 'absolute', top: '24px', right: '24px' }}>
+      <div style={{ position: 'absolute', top: '24px', right: '24px', zIndex: 10 }}>
         <ThemeToggle />
       </div>
 
-      <div style={{ width: '100%', maxWidth: '520px' }}>
-        {/* Brand Crest */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: '14px',
-              background: 'var(--gold-gradient)',
-              margin: '0 auto 16px auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: 'var(--gold-glow-strong)',
-            }}
-          >
-            <Shield size={32} color="#0b0d12" />
+      <div className="auth-content-box">
+        {/* Brand Lockup */}
+        <div className="auth-brand-lockup">
+          <div className="auth-crest-wrapper">
+            <div className="auth-crest-glow" />
+            <img
+              src="/logo.png"
+              alt="Sovereign Men's Club"
+              className="logo-dark auth-crest-img"
+            />
+            <img
+              src="/logo-light.png"
+              alt="Sovereign Men's Club"
+              className="logo-light auth-crest-img"
+            />
           </div>
-          <h1
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: '1.9rem',
-              fontWeight: 800,
-              color: 'var(--text-main)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-            }}
-          >
+          <h1 className="auth-brand-title">
             Sovereign Men's Club
           </h1>
-          <p style={{ color: 'var(--text-gold)', fontSize: '0.82rem', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '6px', fontWeight: 600 }}>
+          <p className="auth-brand-motto">
             Build The Man • Carry The Responsibility • Lead With Purpose
           </p>
         </div>
 
         {/* Card Box */}
-        <div className="card card-gold-border" style={{ padding: '32px' }}>
-          {/* Switcher Tab */}
-          <div style={{ display: 'flex', background: 'var(--bg-primary)', borderRadius: '8px', padding: '4px', marginBottom: '24px' }}>
+        <div className="auth-card">
+          <div className="auth-card-topline" />
+
+          {/* Segmented Control */}
+          <div className="auth-nav-tabs">
             <button
-              className={`btn btn-sm ${mode === 'LOGIN' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1 }}
+              type="button"
+              className={`auth-tab-pill ${mode === 'LOGIN' ? 'active' : ''}`}
               onClick={() => setMode('LOGIN')}
             >
               Member Sign In
             </button>
             <button
-              className={`btn btn-sm ${mode === 'APPLY' ? 'btn-primary' : 'btn-secondary'}`}
-              style={{ flex: 1 }}
+              type="button"
+              className={`auth-tab-pill ${mode === 'APPLY' ? 'active' : ''}`}
               onClick={() => setMode('APPLY')}
             >
               Induction Application
@@ -145,99 +146,176 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
           {mode === 'LOGIN' ? (
             <form onSubmit={handleLoginSubmit}>
               {loginError && (
-                <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '10px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.85rem' }}>
-                  {loginError}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  color: '#ef4444',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  marginBottom: '16px',
+                  fontSize: '0.83rem',
+                }}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                  <span>{loginError}</span>
                 </div>
               )}
 
-              <div className="form-group">
-                <label className="form-label">Sovereign Identifier / Member ID / Email</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Member ID (e.g. pr/habtemariam/0001, SOV-001) or Email"
-                  required
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                />
+              <div style={{ marginBottom: '16px' }}>
+                <label className="auth-field-label">
+                  <span>Sovereign Identifier / Email</span>
+                </label>
+                <div className="auth-input-container">
+                  <span className="auth-input-icon">
+                    <User size={16} />
+                  </span>
+                  <input
+                    type="text"
+                    className="auth-text-input"
+                    placeholder="Member ID (e.g. pr/habtemariam/0001) or Email"
+                    required
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-input"
-                  placeholder="••••••••••••"
-                  required
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                />
+              <div style={{ marginBottom: '20px' }}>
+                <label className="auth-field-label">
+                  <span>Password</span>
+                </label>
+                <div className="auth-input-container">
+                  <span className="auth-input-icon">
+                    <Lock size={16} />
+                  </span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="auth-text-input"
+                    placeholder="••••••••••••"
+                    required
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="auth-toggle-pwd-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '12px' }}>
-                Sign In to Command Center
+              <button
+                type="submit"
+                className="auth-submit-btn"
+                disabled={loggingIn}
+              >
+                {loggingIn ? (
+                  <>
+                    <Loader2 size={17} className="animate-spin" />
+                    <span>Verifying Credentials...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In to Command Center</span>
+                    <ArrowRight size={17} />
+                  </>
+                )}
               </button>
-
-              <div style={{ marginTop: '20px', padding: '12px', background: 'var(--bg-primary)', borderRadius: '6px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                <strong>Member Credentials:</strong> Use your Member ID (e.g. <code>pr/habtemariam/0001</code>, <code>SOV-001</code>) or email with password <code>Password123!</code>
-              </div>
             </form>
           ) : (
             <form onSubmit={handleRegisterSubmit}>
               {regError && (
-                <div style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '10px', borderRadius: '6px', marginBottom: '16px', fontSize: '0.85rem' }}>
-                  {regError}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  color: '#ef4444',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  marginBottom: '16px',
+                  fontSize: '0.83rem',
+                }}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                  <span>{regError}</span>
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label">First Name</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div>
+                  <label className="auth-field-label">First Name</label>
                   <input
                     type="text"
                     className="form-input"
                     required
+                    placeholder="e.g. Dawit"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                   />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Last Name</label>
+                <div>
+                  <label className="auth-field-label">Last Name</label>
                   <input
                     type="text"
                     className="form-input"
                     required
+                    placeholder="e.g. Tadesse"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Email Address</label>
-                <input
-                  type="email"
-                  className="form-input"
-                  required
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                />
+              <div style={{ marginBottom: '14px' }}>
+                <label className="auth-field-label">Email Address</label>
+                <div className="auth-input-container">
+                  <span className="auth-input-icon">
+                    <Mail size={16} />
+                  </span>
+                  <input
+                    type="email"
+                    className="auth-text-input"
+                    required
+                    placeholder="brother@sovereign.club"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                  />
+                </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Create Password (Min 8 chars)</label>
-                <input
-                  type="password"
-                  className="form-input"
-                  required
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                />
+              <div style={{ marginBottom: '14px' }}>
+                <label className="auth-field-label">Password (Min 8 chars)</label>
+                <div className="auth-input-container">
+                  <span className="auth-input-icon">
+                    <Lock size={16} />
+                  </span>
+                  <input
+                    type={showRegPassword ? 'text' : 'password'}
+                    className="auth-text-input"
+                    required
+                    placeholder="Create secure passkey"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="auth-toggle-pwd-btn"
+                    onClick={() => setShowRegPassword(!showRegPassword)}
+                  >
+                    {showRegPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label">Profession / Industry</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div>
+                  <label className="auth-field-label">Profession / Industry</label>
                   <input
                     type="text"
                     className="form-input"
@@ -246,20 +324,20 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
                     onChange={(e) => setOccupation(e.target.value)}
                   />
                 </div>
-                <div className="form-group">
-                  <label className="form-label">City, State / Region</label>
+                <div>
+                  <label className="auth-field-label">City, State / Region</label>
                   <input
                     type="text"
                     className="form-input"
-                    placeholder="e.g. Charlotte, NC"
+                    placeholder="e.g. Addis Ababa"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Target Membership Track</label>
+              <div style={{ marginBottom: '14px' }}>
+                <label className="auth-field-label">Target Membership Track</label>
                 <select
                   className="form-select"
                   value={tierCode}
@@ -272,8 +350,8 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
                 </select>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Why do you seek Sovereign Brotherhood?</label>
+              <div style={{ marginBottom: '16px' }}>
+                <label className="auth-field-label">Statement of Intent & Brotherhood</label>
                 <textarea
                   className="form-textarea"
                   rows={3}
@@ -284,11 +362,29 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '10px' }} disabled={submitting}>
-                {submitting ? 'Creating Credential...' : 'Transmit Application & Induct'}
+              <button
+                type="submit"
+                className="auth-submit-btn"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={17} className="animate-spin" />
+                    <span>Processing Induction...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Transmit Application & Induct</span>
+                    <ArrowRight size={17} />
+                  </>
+                )}
               </button>
             </form>
           )}
+        </div>
+
+        <div className="auth-footer">
+          Sovereign Men's Club • Digital Community Operating System • Encrypted & Sovereign
         </div>
       </div>
     </div>

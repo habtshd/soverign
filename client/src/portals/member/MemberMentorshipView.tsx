@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
+import { Avatar } from '../../components/common/Avatar.js';
 import { Compass, Calendar, CheckSquare, Square, Video, Plus, Shield } from 'lucide-react';
 
 export const MemberMentorshipView: React.FC = () => {
@@ -68,10 +69,10 @@ export const MemberMentorshipView: React.FC = () => {
           <div className="card card-gold-border" style={{ alignSelf: 'flex-start' }}>
             <span className="badge badge-gold" style={{ marginBottom: '12px' }}>ASSIGNED MENTOR</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <img
-                src={mentor?.member?.user?.avatarUrl || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&fit=crop'}
-                alt="Mentor"
-                style={{ width: 64, height: 64, borderRadius: '50%', border: '2px solid var(--gold-500)', objectFit: 'cover' }}
+              <Avatar
+                firstName={mentor?.member?.user?.firstName}
+                lastName={mentor?.member?.user?.lastName}
+                size={56}
               />
               <div>
                 <h3 style={{ fontSize: '1.15rem', color: '#fff', fontWeight: 700 }}>

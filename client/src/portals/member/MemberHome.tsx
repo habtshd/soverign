@@ -53,13 +53,13 @@ export const MemberHome: React.FC<MemberHomeProps> = ({ onNavigate }) => {
   return (
     <div>
       {/* Welcome Banner */}
-      <div className="page-header" style={{ marginBottom: '20px' }}>
+      <div className="page-header" style={{ marginBottom: '24px' }}>
         <div>
-          <h1 className="page-title" style={{ fontSize: '1.45rem', fontWeight: 600 }}>
+          <h1 className="page-title" style={{ fontSize: '1.65rem', fontWeight: 850, letterSpacing: '0.03em' }}>
             Welcome back, {user?.firstName || 'Brother'}
           </h1>
-          <p className="page-subtitle" style={{ fontSize: '0.9rem', color: 'var(--text-gold)', marginTop: '2px', letterSpacing: '0.02em' }}>
-            Build the man. Carry the responsibility.
+          <p className="page-subtitle" style={{ fontSize: '0.92rem', color: 'var(--text-gold)', marginTop: '4px', letterSpacing: '0.04em', fontWeight: 700, textTransform: 'uppercase' }}>
+            ወንድ መሆን እዳ ነው! • Build the Man. Carry the Responsibility.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>

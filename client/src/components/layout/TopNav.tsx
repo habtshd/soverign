@@ -1,31 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth, PortalType } from '../../context/AuthContext.js';
 import { api } from '../../api/client.js';
-import { Bell, Search, Check, ShieldAlert } from 'lucide-react';
+import { Bell, Search, Check, ShieldAlert, ChevronDown, UserCheck } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle.js';
+import { Avatar } from '../common/Avatar.js';
 
 interface TopNavProps {
   onSearch?: (query: string) => void;
 }
 
 export const TopNav: React.FC<TopNavProps> = () => {
-  const { user, activePortal, setActivePortal } = useAuth();
+  const { user, activePortal, setActivePortal, quickSwitchUser } = useAuth();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isSuperAdminOrAdmin =
     user?.roles?.includes('SUPER_ADMIN') || user?.roles?.includes('ADMIN');
   const isOrganizer = user?.roles?.includes('ORGANIZER') || isSuperAdminOrAdmin;
   const isMentor = user?.roles?.includes('MENTOR') || isSuperAdminOrAdmin;
-  const isFinance = user?.roles?.includes('FINANCE_MANAGER') || isSuperAdminOrAdmin;
+
+  const demoAccounts = [
+    { label: 'Admin (Council Architect)', name: 'Habtsh', email: 'pr/habtemariam/0001', role: 'ADMIN' },
+    { label: 'Admin (Club Founder)', name: 'Eyob Haile', email: 'admin@sovereign.club', role: 'ADMIN' },
+    { label: 'Leader / Organizer', name: 'Dawit Tadesse', email: 'organizer@sovereign.club', role: 'ORGANIZER' },
+    { label: 'Founding Mentor', name: 'Yonas Kassa', email: 'mentor@sovereign.club', role: 'MENTOR' },
+    { label: 'Sovereign Member', name: 'Alex Mercer', email: 'alex@sovereign.club', role: 'MEMBER' },
+  ];
 
   useEffect(() => {
     if (user) {
       loadNotifications();
     }
   }, [user]);
+
+  // Click outside listener for dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowRoleDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const loadNotifications = async () => {
     try {
@@ -60,195 +82,138 @@ export const TopNav: React.FC<TopNavProps> = () => {
 
   return (
     <header className="topbar">
-      {/* Portal Switcher */}
-      <div className="portal-switcher">
-        <button
-          className={`portal-btn ${activePortal === 'MEMBER' ? 'active' : ''}`}
-          onClick={() => setActivePortal('MEMBER')}
-        >
-          Member
-        </button>
 
-        {isSuperAdminOrAdmin && (
-          <button
-            className={`portal-btn ${activePortal === 'ADMIN' ? 'active' : ''}`}
-            onClick={() => setActivePortal('ADMIN')}
-          >
-            Admin
-          </button>
-        )}
 
-        {isMentor && (
-          <button
-            className={`portal-btn ${activePortal === 'MENTOR' ? 'active' : ''}`}
-            onClick={() => setActivePortal('MENTOR')}
-          >
-            Mentor
-          </button>
-        )}
-
-        {isOrganizer && (
-          <button
-            className={`portal-btn ${activePortal === 'ORGANIZER' ? 'active' : ''}`}
-            onClick={() => setActivePortal('ORGANIZER')}
-          >
-            Organizer
-          </button>
-        )}
-
-        {isFinance && (
-          <button
-            className={`portal-btn ${activePortal === 'FINANCE' ? 'active' : ''}`}
-            onClick={() => setActivePortal('FINANCE')}
-          >
-            Finance
-          </button>
-        )}
-      </div>
-
-      {/* Center Search Input */}
-      <form onSubmit={handleSearch} style={{ position: 'relative', width: '320px' }}>
+      {/* 2. Center: Sleek Modern Search Input */}
+      <form onSubmit={handleSearch} className="topbar-search-form">
+        <Search size={15} className="topbar-search-icon" />
         <input
           type="text"
-          className="form-input"
-          placeholder="Global system search..."
-          style={{ paddingLeft: '34px', height: '36px', fontSize: '0.82rem' }}
+          className="topbar-search-input"
+          placeholder="Search members, events, records..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Search
-          size={16}
-          style={{ position: 'absolute', left: 10, top: 10, color: 'var(--text-muted)' }}
-        />
+        <span className="search-shortcut">⌘K</span>
       </form>
 
-      {/* Right Actions */}
+      {/* 3. Right: Sleek Modern Actions */}
       <div className="topbar-actions">
-        {/* Dark / Light Mode Switcher */}
+        {/* Theme Toggle (Icon button) */}
         <ThemeToggle />
-
-        <span className="role-badge">
-          {activePortal} VIEW • {user?.roles?.[0] || 'GUEST'}
-        </span>
 
         {/* Notification Bell */}
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            style={{
-              background: 'rgba(255,255,255,0.06)',
-              border: '1px solid var(--border-muted)',
-              borderRadius: '8px',
-              padding: '8px',
-              cursor: 'pointer',
-              color: '#fff',
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className="icon-btn"
+            title="Notifications"
           >
             <Bell size={18} />
-            {unreadCount > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: -4,
-                  right: -4,
-                  background: 'var(--status-danger)',
-                  color: '#fff',
-                  borderRadius: '50%',
-                  fontSize: '0.65rem',
-                  width: '16px',
-                  height: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                }}
-              >
-                {unreadCount}
-              </span>
-            )}
+            {unreadCount > 0 && <span className="notification-bubble">{unreadCount}</span>}
           </button>
 
-          {/* Notifications Drawer */}
           {showNotifications && (
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '46px',
-                width: '350px',
-                background: 'var(--bg-modal)',
-                border: '1px solid var(--border-gold)',
-                borderRadius: 'var(--radius-md)',
-                boxShadow: 'var(--shadow-lg), var(--gold-glow)',
-                zIndex: 1000,
-                padding: '16px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '12px',
-                  borderBottom: '1px solid var(--border-subtle)',
-                  paddingBottom: '8px',
-                }}
-              >
-                <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem' }}>
-                  Notifications ({unreadCount})
-                </div>
+            <div className="notification-dropdown">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Notifications</span>
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--text-gold)',
-                      fontSize: '0.75rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-gold)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                   >
-                    <Check size={14} /> Mark all read
+                    Mark all read
                   </button>
                 )}
               </div>
 
-              <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto' }}>
                 {notifications.length === 0 ? (
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', padding: '16px' }}>
-                    No notifications
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.82rem' }}>
+                    No unread notices
                   </div>
                 ) : (
                   notifications.map((n) => (
                     <div
                       key={n.id}
                       style={{
-                        padding: '10px',
-                        borderRadius: '6px',
+                        padding: '10px 12px',
                         background: n.isRead ? 'transparent' : 'rgba(201, 151, 56, 0.08)',
-                        border: '1px solid',
-                        borderColor: n.isRead ? 'var(--border-subtle)' : 'var(--border-gold)',
+                        borderRadius: '6px',
+                        borderLeft: n.isRead ? '2px solid transparent' : '2px solid var(--gold-400)',
                       }}
                     >
-                      <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff' }}>
-                        {n.title}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.82rem' }}>{n.title}</div>
+                      <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '2px', lineHeight: 1.35 }}>
                         {n.message}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                        {new Date(n.createdAt).toLocaleTimeString()}
                       </div>
                     </div>
                   ))
                 )}
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Profile Avatar Dropdown (No duplicate role text in header) */}
+        <div style={{ position: 'relative' }} ref={dropdownRef}>
+          <button
+            onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+            className="user-profile-btn"
+            title={`${user?.firstName} ${user?.lastName} • ${user?.roles?.[0] || 'MEMBER'}`}
+            aria-label="User account and switch test role"
+          >
+            <Avatar
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+              size={34}
+            />
+            <span className="user-online-dot" />
+          </button>
+
+          {showRoleDropdown && (
+            <div className="role-dropdown-menu">
+              <div className="role-dropdown-user-header">
+                <Avatar
+                  firstName={user?.firstName}
+                  lastName={user?.lastName}
+                  size={36}
+                />
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.86rem', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {user?.firstName} {user?.lastName}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-gold)', fontWeight: 600 }}>
+                    {user?.roles?.[0] || 'MEMBER'}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {user?.email}
+                  </div>
+                </div>
+              </div>
+
+              <div className="role-dropdown-header">
+                Switch Test Account
+              </div>
+              {demoAccounts.map((acc) => {
+                const isActive = user?.email === acc.email;
+                return (
+                  <button
+                    key={acc.email}
+                    onClick={() => {
+                      quickSwitchUser(acc.email);
+                      setShowRoleDropdown(false);
+                    }}
+                    className={`role-dropdown-item ${isActive ? 'active' : ''}`}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.82rem' }}>{acc.label}</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{acc.name}</div>
+                    </div>
+                    {isActive && <Check size={14} color="var(--gold-400)" />}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

@@ -30,67 +30,110 @@ export const DigitalMemberCard: React.FC<DigitalMemberCardProps> = ({
       digitalIdCode || memberNumber
     )}`;
 
+  // Format member number cleanly (e.g. SOV · 014)
+  const displayMemberNumber = (memberNumber || 'SOV-001')
+    .toUpperCase()
+    .replace(/^PR\/[A-Z0-9_-]+\/([0-9]+)$/i, 'SOV · $1')
+    .replace(/-/g, ' · ');
+
   return (
     <div className="digital-id-container">
       <div className="digital-card">
-        {/* Top Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Shield size={18} color="var(--gold-400)" />
-              <span className="digital-card-brand-title">
-                Sovereign Men's Club
-              </span>
-            </div>
-            <div className="digital-card-sub" style={{ fontSize: '0.68rem', color: 'var(--text-gold)', letterSpacing: '0.1em', marginTop: '2px', fontWeight: 600 }}>
-              OPERATIONAL CREDENTIAL
-            </div>
-          </div>
-          <div className="digital-card-chip" />
+        {/* Simple Non-overlapping Minimalist Contour Lines in Empty Space */}
+        <svg
+          className="card-guilloche-bg"
+          viewBox="0 0 440 260"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="simpleLineGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="var(--gold-400)" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="var(--gold-400)" stopOpacity="0.03" />
+            </linearGradient>
+            <linearGradient id="topLineGold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="var(--gold-400)" stopOpacity="0.04" />
+              <stop offset="50%" stopColor="var(--gold-400)" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="var(--gold-400)" stopOpacity="0.04" />
+            </linearGradient>
+          </defs>
+
+          {/* Bottom-left empty space curves (below badge, away from Atlas & text) */}
+          <g stroke="url(#simpleLineGold)" strokeWidth="0.8" fill="none">
+            <path d="M -10,215 C 35,212 80,225 140,255" />
+            <path d="M -10,228 C 35,225 75,237 120,265" />
+            <path d="M -10,241 C 30,238 65,249 95,275" />
+          </g>
+
+          {/* Top-edge corner arches (anchored into the top border, zero floating ends) */}
+          <g stroke="url(#simpleLineGold)" strokeWidth="0.8" fill="none">
+            <path d="M 175,-10 C 215,22 280,22 320,-10" />
+            <path d="M 195,-10 C 225,12 270,12 300,-10" />
+            <path d="M 215,-10 C 235,5 260,5 280,-10" />
+          </g>
+
+          {/* Top-right corner curves (hugging the top-right corner above the chip) */}
+          <g stroke="url(#simpleLineGold)" strokeWidth="0.8" fill="none">
+            <path d="M 345,-10 C 385,16 420,22 450,18" />
+            <path d="M 370,-10 C 400,8 430,12 450,6" />
+          </g>
+        </svg>
+
+        {/* Artistic Embedded Muscular Watermark */}
+        <div className="card-watermark-art" aria-hidden="true">
+          <img
+            src="/card-watermark.jpg"
+            alt=""
+            className="watermark-img"
+          />
         </div>
 
-        {/* Center: Member Number & Name */}
-        <div>
-          <div className="digital-card-number">{memberNumber || 'SOV-000'}</div>
-          <div className="digital-card-name">
-            {name}
+        {/* Top Row: Clean Brand Logo & Smart Chip */}
+        <div className="card-top-row">
+          <div className="card-brand-mark">
+            <img
+              src="/logo.png"
+              alt="Sovereign"
+              className="logo-dark card-logo"
+            />
+            <img
+              src="/logo-light.png"
+              alt="Sovereign"
+              className="logo-light card-logo"
+            />
           </div>
-          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-            <span className="badge badge-gold">{tier}</span>
-            <span className="badge digital-card-council-badge">
-              <Award size={12} style={{ marginRight: '3px' }} />
-              {badgeTier.replace('_', ' ')}
-            </span>
+          <div className="card-emv-chip" title="Sovereign Smart Chip">
+            <div className="chip-line horizontal" />
+            <div className="chip-line vertical" />
+            <div className="chip-core" />
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="digital-card-footer">
-          <div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-              Verified Status
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981' }} />
-              ACTIVE & STANDING
-            </div>
+        {/* Center: Clean Member Typography */}
+        <div className="card-body-content">
+          <div className="card-member-id">{displayMemberNumber}</div>
+          <div className="card-member-name">{name}</div>
+          <div className="card-tier-pill">
+            <span className="tier-name">{tier}</span>
+            {badgeTier && badgeTier !== 'STANDARD' && (
+              <>
+                <span className="tier-dot">•</span>
+                <span className="tier-badge">{badgeTier.replace('_', ' ')}</span>
+              </>
+            )}
           </div>
+        </div>
 
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
-              <Clock size={10} /> Service Hours
-            </div>
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-gold)', fontWeight: 700 }}>
-              {serviceHours} hrs
-            </div>
-          </div>
-
+        {/* Bottom Footer: Minimalist QR Trigger */}
+        <div className="card-footer-row">
           <button
             onClick={() => setShowQR(!showQR)}
-            className="digital-card-qr-btn"
+            className="card-qr-trigger"
             title="Scan / Show Check-in QR"
+            aria-label="Toggle QR Code"
           >
-            <QrCode size={20} />
+            <QrCode size={18} />
           </button>
         </div>
       </div>

@@ -48,4 +48,53 @@ export class AdminController {
       next(error);
     }
   }
+
+  static async getUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const users = await AdminService.getUsers();
+      return res.json({ success: true, data: users });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getRoles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const roles = await AdminService.getRoles();
+      return res.json({ success: true, data: roles });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async assignRoles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.params.id as string;
+      const { roles } = req.body;
+      const user = await AdminService.assignUserRoles(userId, roles);
+      return res.json({ success: true, data: user });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async triggerBackup(req: Request, res: Response, next: NextFunction) {
+    try {
+      const adminId = req.user?.id || 'SYSTEM';
+      const result = await AdminService.triggerBackup(adminId);
+      return res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getReports(req: Request, res: Response, next: NextFunction) {
+    try {
+      const reports = await AdminService.getReports();
+      return res.json({ success: true, data: reports });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+

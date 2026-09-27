@@ -252,5 +252,14 @@ export const api = {
         body: JSON.stringify({ key, value, description }),
       }),
     search: (query: string) => apiRequest(`/admin/search?q=${encodeURIComponent(query)}`),
+    getUsers: () => apiRequest('/admin/users'),
+    getRoles: () => apiRequest('/admin/roles'),
+    assignRoles: (userId: string, roles: string[]) =>
+      apiRequest(`/admin/users/${userId}/roles`, {
+        method: 'POST',
+        body: JSON.stringify({ roles }),
+      }),
+    triggerBackup: () => apiRequest('/admin/backup', { method: 'POST' }),
+    getReports: () => apiRequest('/admin/reports'),
   },
 };
