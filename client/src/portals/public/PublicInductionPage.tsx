@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from '../../components/layout/ThemeToggle.js';
 
+import { SovereignReadinessWizard } from './SovereignReadinessWizard.js';
+
 interface PublicInductionPageProps {
   onSuccess: () => void;
 }
@@ -28,20 +30,6 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
   const [loginError, setLoginError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
-
-  // Register fields
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [showRegPassword, setShowRegPassword] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [occupation, setOccupation] = useState('');
-  const [city, setCity] = useState('');
-  const [reasonToJoin, setReasonToJoin] = useState('');
-  const [tierCode, setTierCode] = useState('GENERAL');
-  const [regError, setRegError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,32 +47,13 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
     }
   };
 
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRegError(null);
-    setSubmitting(true);
+  const handleWizardSuccess = async ({ email, pass }: { email: string; pass: string }) => {
     try {
-      const res = await api.auth.register({
-        email: regEmail,
-        password: regPassword,
-        firstName,
-        lastName,
-        phone,
-        occupation,
-        city,
-        reasonToJoin,
-        membershipTypeCode: tierCode,
-      });
-
-      if (res.success && res.data?.token) {
-        localStorage.setItem('sovereign_token', res.data.token);
-        await login(regEmail, regPassword);
-        onSuccess();
-      } else {
-        setRegError(res.error || 'Failed to complete member induction.');
-      }
-    } finally {
-      setSubmitting(false);
+      await login(email, pass);
+      onSuccess();
+    } catch (err) {
+      setMode('LOGIN');
+      setLoginEmail(email);
     }
   };
 
@@ -97,7 +66,7 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
         <ThemeToggle />
       </div>
 
-      <div className="auth-content-box">
+      <div className={`auth-content-box ${mode === 'APPLY' ? 'induction-wide' : ''}`}>
         {/* Brand Lockup */}
         <div className="auth-brand-lockup">
           <div className="auth-crest-wrapper">
@@ -139,7 +108,7 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
               className={`auth-tab-pill ${mode === 'APPLY' ? 'active' : ''}`}
               onClick={() => setMode('APPLY')}
             >
-              Induction Application
+              Registration & Readiness Application
             </button>
           </div>
 
@@ -174,7 +143,7 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
                   <input
                     type="text"
                     className="auth-text-input"
-                    placeholder="Member ID (e.g. pr/habtemariam/0001) or Email"
+                    placeholder="Member ID (e.g. MAN 001) or Email"
                     required
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
@@ -228,158 +197,10 @@ export const PublicInductionPage: React.FC<PublicInductionPageProps> = ({ onSucc
               </button>
             </form>
           ) : (
-            <form onSubmit={handleRegisterSubmit}>
-              {regError && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
-                  color: '#ef4444',
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  marginBottom: '16px',
-                  fontSize: '0.83rem',
-                }}>
-                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
-                  <span>{regError}</span>
-                </div>
-              )}
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
-                <div>
-                  <label className="auth-field-label">First Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    required
-                    placeholder="e.g. Dawit"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="auth-field-label">Last Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    required
-                    placeholder="e.g. Tadesse"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label className="auth-field-label">Email Address</label>
-                <div className="auth-input-container">
-                  <span className="auth-input-icon">
-                    <Mail size={16} />
-                  </span>
-                  <input
-                    type="email"
-                    className="auth-text-input"
-                    required
-                    placeholder="brother@sovereign.club"
-                    value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label className="auth-field-label">Password (Min 8 chars)</label>
-                <div className="auth-input-container">
-                  <span className="auth-input-icon">
-                    <Lock size={16} />
-                  </span>
-                  <input
-                    type={showRegPassword ? 'text' : 'password'}
-                    className="auth-text-input"
-                    required
-                    placeholder="Create secure passkey"
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="auth-toggle-pwd-btn"
-                    onClick={() => setShowRegPassword(!showRegPassword)}
-                  >
-                    {showRegPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
-                <div>
-                  <label className="auth-field-label">Profession / Industry</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="e.g. Civil Contractor"
-                    value={occupation}
-                    onChange={(e) => setOccupation(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="auth-field-label">City, State / Region</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="e.g. Addis Ababa"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '14px' }}>
-                <label className="auth-field-label">Target Membership Track</label>
-                <select
-                  className="form-select"
-                  value={tierCode}
-                  onChange={(e) => setTierCode(e.target.value)}
-                >
-                  <option value="GENERAL">Sovereign Brother ($300/yr)</option>
-                  <option value="EXECUTIVE">Executive Member ($600/yr)</option>
-                  <option value="FOUNDING">Founding Council ($1,200/yr)</option>
-                  <option value="YOUNG_LEADER">Rising Sovereign ($150/yr)</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <label className="auth-field-label">Statement of Intent & Brotherhood</label>
-                <textarea
-                  className="form-textarea"
-                  rows={3}
-                  required
-                  placeholder="Outline your commitment to physical vitality, family leadership, and community service..."
-                  value={reasonToJoin}
-                  onChange={(e) => setReasonToJoin(e.target.value)}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="auth-submit-btn"
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 size={17} className="animate-spin" />
-                    <span>Processing Induction...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Transmit Application & Induct</span>
-                    <ArrowRight size={17} />
-                  </>
-                )}
-              </button>
-            </form>
+            <SovereignReadinessWizard
+              onSuccess={handleWizardSuccess}
+              onCancel={() => setMode('LOGIN')}
+            />
           )}
         </div>
 

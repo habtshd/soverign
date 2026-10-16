@@ -6,6 +6,7 @@ import { TopNav } from './components/layout/TopNav.js';
 import { ErrorBoundary } from './components/common/ErrorBoundary.js';
 
 // Portals
+import { SovereignLandingPage } from './portals/landing/SovereignLandingPage.js';
 import { PublicInductionPage } from './portals/public/PublicInductionPage.js';
 
 // 1. Member Portal Views
@@ -40,26 +41,88 @@ import { AdminIntegrationsView } from './portals/admin/AdminIntegrationsView.js'
 import { AdminAuditView } from './portals/admin/AdminAuditView.js';
 import { AdminSettingsView } from './portals/admin/AdminSettingsView.js';
 
+const PORTAL_TABS: Record<string, string[]> = {
+  ADMIN: [
+    'admin-dashboard',
+    'admin-members',
+    'admin-applications',
+    'admin-roles',
+    'admin-events',
+    'admin-content',
+    'admin-finance',
+    'admin-reports',
+    'admin-integrations',
+    'admin-audit',
+    'admin-settings',
+  ],
+  MEMBER: [
+    'member-home',
+    'member-card',
+    'member-events',
+    'member-learning',
+    'member-mentorship',
+    'member-fitness',
+    'member-business',
+    'member-career',
+    'member-service',
+    'member-community',
+    'member-profile',
+  ],
+  MENTOR: [
+    'mentor-mentees',
+    'mentor-matching',
+    'mentor-sessions',
+    'mentor-notes',
+    'mentor-goals',
+    'mentor-communication',
+    'mentor-reports',
+  ],
+  ORGANIZER: [
+    'organizer-dashboard',
+    'organizer-programs',
+    'organizer-events',
+    'organizer-checkin',
+    'organizer-challenges',
+    'organizer-projects',
+    'organizer-team',
+    'organizer-reports',
+  ],
+};
+
+const DEFAULT_PORTAL_TABS: Record<string, string> = {
+  ADMIN: 'admin-dashboard',
+  MEMBER: 'member-home',
+  MENTOR: 'mentor-mentees',
+  ORGANIZER: 'organizer-dashboard',
+};
+
 const MainLayout: React.FC = () => {
   const { user, activePortal } = useAuth();
-  const [currentTab, setCurrentTab] = useState('member-home');
+
+  const getInitialTab = (): string => {
+    const saved = localStorage.getItem('sovereign_current_tab');
+    if (saved && PORTAL_TABS[activePortal]?.includes(saved)) {
+      return saved;
+    }
+    return DEFAULT_PORTAL_TABS[activePortal] || 'member-home';
+  };
+
+  const [currentTab, setCurrentTabState] = useState<string>(getInitialTab);
+
+  const setCurrentTab = (tab: string) => {
+    localStorage.setItem('sovereign_current_tab', tab);
+    setCurrentTabState(tab);
+  };
 
   // Automatically adapt default tab when portal changes
   useEffect(() => {
-    switch (activePortal) {
-      case 'ADMIN':
-        setCurrentTab('admin-dashboard');
-        break;
-      case 'MENTOR':
-        setCurrentTab('mentor-mentees');
-        break;
-      case 'ORGANIZER':
-        setCurrentTab('organizer-dashboard');
-        break;
-      case 'MEMBER':
-      default:
-        setCurrentTab('member-home');
-        break;
+    const saved = localStorage.getItem('sovereign_current_tab');
+    if (saved && PORTAL_TABS[activePortal]?.includes(saved)) {
+      setCurrentTabState(saved);
+    } else {
+      const defaultTab = DEFAULT_PORTAL_TABS[activePortal] || 'member-home';
+      setCurrentTabState(defaultTab);
+      localStorage.setItem('sovereign_current_tab', defaultTab);
     }
   }, [activePortal]);
 
@@ -144,7 +207,7 @@ const MainLayout: React.FC = () => {
       <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} />
 
       <div className="main-wrapper">
-        <TopNav />
+        <TopNav currentTab={currentTab} onNavigate={setCurrentTab} />
         <main className="content-body">
           <ErrorBoundary onReset={() => setCurrentTab('member-home')}>
             {renderContent()}
@@ -179,7 +242,7 @@ export const AppContent: React.FC = () => {
   }
 
   if (!user) {
-    return <PublicInductionPage onSuccess={() => refreshUser()} />;
+    return <SovereignLandingPage onSuccess={() => refreshUser()} />;
   }
 
   return <MainLayout />;

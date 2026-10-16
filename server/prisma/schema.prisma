@@ -222,6 +222,7 @@ model MemberApplication {
   reviewedByUserId    String?
   reviewNotes         String?
   googleFormResponseId String?
+  responsesJson       String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -1021,3 +1022,85 @@ model Integration {
   errorLog    String?
   updatedAt   DateTime  @updatedAt
 }
+
+// ----------------------------------------------------
+// 13. YOUTUBE CHANNEL SYNCHRONIZATION MODULE
+// ----------------------------------------------------
+
+model YouTubeChannel {
+  id                   String            @id @default(uuid())
+  channelId            String            @unique // e.g. UC_official_eyobhaile
+  handle               String            @default("@official_eyobhaile")
+  title                String
+  description          String
+  customUrl            String?
+  publishedAt          DateTime
+  thumbnailDefaultUrl  String?
+  thumbnailMediumUrl   String?
+  thumbnailHighUrl     String?
+  uploadsPlaylistId    String            // Playlist ID containing all public uploads (UU...)
+  subscriberCount      BigInt            @default(0)
+  viewCount            BigInt            @default(0)
+  videoCount           Int               @default(0)
+  isActive             Boolean           @default(true)
+  lastSyncedAt         DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  videos               YouTubeVideo[]
+  syncStates           YouTubeSyncState[]
+
+  @@map("youtube_channels")
+}
+
+model YouTubeVideo {
+  id                    String          @id @default(uuid())
+  youtubeVideoId        String          @unique // unique YouTube alphanumeric ID
+  channelId             String          // foreign key / channel identifier
+  title                 String
+  description           String
+  thumbnailDefaultUrl   String?
+  thumbnailMediumUrl    String?
+  thumbnailHighUrl      String?
+  thumbnailMaxresUrl    String?
+  publishedAt           DateTime
+  duration              String          // formatted "24:18" or "PT24M18S"
+  durationSeconds       Int             @default(0)
+  liveBroadcastContent  String          @default("none") // none, upcoming, live
+  viewCount             BigInt          @default(0)
+  likeCount             BigInt          @default(0)
+  commentCount          BigInt          @default(0)
+  youtubeUrl            String          // https://www.youtube.com/watch?v=...
+  playlistId            String?
+  playlistTitle         String?
+  category              String?         @default("Curriculum")
+  lastSyncedAt          DateTime        @default(now())
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  channel               YouTubeChannel? @relation(fields: [channelId], references: [channelId], onDelete: Cascade)
+
+  @@index([publishedAt(sort: Desc)])
+  @@index([viewCount(sort: Desc)])
+  @@index([channelId])
+  @@map("youtube_videos")
+}
+
+model YouTubeSyncState {
+  id               String          @id @default(uuid())
+  channelId        String
+  syncType         String          @default("FULL_POLL") // FULL_POLL, WEBHOOK_PUSH, SCHEDULED_RECONCILE
+  status           String          @default("SUCCESS")   // PENDING, SUCCESS, FAILED
+  videosDiscovered Int             @default(0)
+  videosInserted   Int             @default(0)
+  videosUpdated    Int             @default(0)
+  videosSkipped    Int             @default(0)
+  errorLog         String?
+  startedAt        DateTime        @default(now())
+  completedAt      DateTime?
+
+  channel          YouTubeChannel? @relation(fields: [channelId], references: [channelId], onDelete: Cascade)
+
+  @@map("youtube_sync_state")
+}
+

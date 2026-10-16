@@ -14,17 +14,19 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '', style 
   return (
     <button
       type="button"
-      className={`icon-btn ${className}`}
+      className={`topbar-action-btn theme-toggle-btn ${className}`}
       onClick={toggleTheme}
-      title={isLight ? 'Switch to Dark Mode (Obsidian)' : 'Switch to Light Mode (Ivory White)'}
+      title={isLight ? 'Switch to Obsidian Dark Mode' : 'Switch to Ivory Light Mode'}
       aria-label="Toggle theme"
       style={style}
     >
-      {isLight ? (
-        <Moon size={17} style={{ transition: 'transform 0.2s ease' }} />
-      ) : (
-        <Sun size={17} style={{ transition: 'transform 0.2s ease' }} />
-      )}
+      <span className="theme-icon-container">
+        {isLight ? (
+          <Moon size={16} className="theme-icon moon-icon" />
+        ) : (
+          <Sun size={16} className="theme-icon sun-icon" />
+        )}
+      </span>
     </button>
   );
 };

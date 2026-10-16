@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext.js';
 import { DigitalMemberCard } from '../../components/digital-id/DigitalMemberCard.js';
+import { formatMemberId } from '../../utils/formatters.js';
 import { Shield, Award, CheckCircle, Clock, FileCheck } from 'lucide-react';
 
 export const MemberCardView: React.FC = () => {
@@ -22,7 +23,7 @@ export const MemberCardView: React.FC = () => {
         {/* Left: Card Display */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <DigitalMemberCard
-            memberNumber={member?.memberNumber || 'SOV-001'}
+            memberNumber={member?.memberNumber || 'MAN 001'}
             digitalIdCode={member?.digitalIdCode || 'SOV-ALPHA-001'}
             name={`${user?.firstName} ${user?.lastName}`}
             tier={member?.membershipType?.name || 'Sovereign Brother'}
@@ -43,7 +44,7 @@ export const MemberCardView: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Member Number</span>
                 <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-gold)', fontWeight: 600 }}>
-                  {member?.memberNumber}
+                  {formatMemberId(member?.memberNumber)}
                 </span>
               </div>
 

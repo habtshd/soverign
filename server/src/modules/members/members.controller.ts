@@ -90,4 +90,13 @@ export class MembersController {
       next(error);
     }
   }
+
+  static async create(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await MembersService.createMember(req.body, req.user!.id);
+      return res.status(201).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

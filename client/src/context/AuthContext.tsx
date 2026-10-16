@@ -21,7 +21,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('sovereign_token'));
   const [isLoading, setIsLoading] = useState(true);
-  const [activePortal, setActivePortal] = useState<PortalType>('MEMBER');
+  const getInitialPortal = (): PortalType => {
+    const saved = localStorage.getItem('sovereign_active_portal') as PortalType | null;
+    if (saved && ['MEMBER', 'MENTOR', 'ORGANIZER', 'ADMIN'].includes(saved)) {
+      return saved;
+    }
+    return 'MEMBER';
+  };
+
+  const [activePortal, setActivePortalState] = useState<PortalType>(getInitialPortal);
+
+  const setActivePortal = (portal: PortalType) => {
+    localStorage.setItem('sovereign_active_portal', portal);
+    setActivePortalState(portal);
+  };
 
   const refreshUser = async () => {
     const storedToken = localStorage.getItem('sovereign_token');
@@ -34,14 +47,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const res = await api.auth.getMe();
       if (res.success && res.data) {
-        setUser(res.data);
+        const userData = res.data;
+        setUser(userData);
+
+        const roles: string[] = userData.roles || [];
+        const hasAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+        const hasOrganizer = roles.includes('ORGANIZER');
+        const hasMentor = roles.includes('MENTOR');
+
+        const savedPortal = localStorage.getItem('sovereign_active_portal') as PortalType | null;
+
+        // If a portal was previously saved and user has permission, preserve it
+        if (savedPortal === 'ADMIN' && hasAdmin) {
+          setActivePortalState('ADMIN');
+        } else if (savedPortal === 'ORGANIZER' && (hasOrganizer || hasAdmin)) {
+          setActivePortalState('ORGANIZER');
+        } else if (savedPortal === 'MENTOR' && (hasMentor || hasAdmin)) {
+          setActivePortalState('MENTOR');
+        } else if (savedPortal === 'MEMBER') {
+          setActivePortalState('MEMBER');
+        } else {
+          // If no valid saved portal, default to highest privilege role
+          if (hasAdmin) {
+            setActivePortal('ADMIN');
+          } else if (hasOrganizer) {
+            setActivePortal('ORGANIZER');
+          } else if (hasMentor) {
+            setActivePortal('MENTOR');
+          } else {
+            setActivePortal('MEMBER');
+          }
+        }
       } else {
         localStorage.removeItem('sovereign_token');
+        localStorage.removeItem('sovereign_active_portal');
+        localStorage.removeItem('sovereign_current_tab');
         setUser(null);
         setToken(null);
       }
     } catch {
       localStorage.removeItem('sovereign_token');
+      localStorage.removeItem('sovereign_active_portal');
+      localStorage.removeItem('sovereign_current_tab');
       setUser(null);
       setToken(null);
     } finally {
@@ -63,15 +110,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(res.data.token);
       setUser(res.data.user);
 
-      if (res.data.user.roles.includes('SUPER_ADMIN') || res.data.user.roles.includes('ADMIN')) {
-        setActivePortal('ADMIN');
-      } else if (res.data.user.roles.includes('ORGANIZER')) {
-        setActivePortal('ORGANIZER');
-      } else if (res.data.user.roles.includes('MENTOR')) {
-        setActivePortal('MENTOR');
+      const roles: string[] = res.data.user.roles || [];
+      const hasAdmin = roles.includes('SUPER_ADMIN') || roles.includes('ADMIN');
+      const hasOrganizer = roles.includes('ORGANIZER');
+      const hasMentor = roles.includes('MENTOR');
+
+      const savedPortal = localStorage.getItem('sovereign_active_portal') as PortalType | null;
+      let targetPortal: PortalType = 'MEMBER';
+
+      if (savedPortal === 'ADMIN' && hasAdmin) {
+        targetPortal = 'ADMIN';
+      } else if (savedPortal === 'ORGANIZER' && (hasOrganizer || hasAdmin)) {
+        targetPortal = 'ORGANIZER';
+      } else if (savedPortal === 'MENTOR' && (hasMentor || hasAdmin)) {
+        targetPortal = 'MENTOR';
+      } else if (hasAdmin) {
+        targetPortal = 'ADMIN';
+      } else if (hasOrganizer) {
+        targetPortal = 'ORGANIZER';
+      } else if (hasMentor) {
+        targetPortal = 'MENTOR';
       } else {
-        setActivePortal('MEMBER');
+        targetPortal = 'MEMBER';
       }
+
+      setActivePortal(targetPortal);
       return true;
     }
     return false;
@@ -79,9 +142,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('sovereign_token');
+    localStorage.removeItem('sovereign_active_portal');
+    localStorage.removeItem('sovereign_current_tab');
     setToken(null);
     setUser(null);
-    setActivePortal('MEMBER');
+    setActivePortalState('MEMBER');
   };
 
   const quickSwitchUser = async (presetEmail: string) => {

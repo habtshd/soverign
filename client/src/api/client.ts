@@ -68,6 +68,8 @@ export const api = {
   members: {
     getAll: (params?: Record<string, any>) =>
       apiRequest(`/members${buildQuery(params)}`),
+    create: (data: any) =>
+      apiRequest('/members', { method: 'POST', body: JSON.stringify(data) }),
     getById: (id: string) => apiRequest(`/members/${id}`),
     updateProfile: (id: string, data: any) =>
       apiRequest(`/members/${id}/profile`, { method: 'PATCH', body: JSON.stringify(data) }),
@@ -120,6 +122,22 @@ export const api = {
       apiRequest(`/learning/lessons/${lessonId}/toggle`, { method: 'POST' }),
     getBooks: () => apiRequest('/learning/books'),
     getPodcasts: () => apiRequest('/learning/podcasts'),
+  },
+
+  // YouTube Channel & Academy Synchronization
+  youtube: {
+    getChannel: () => apiRequest('/youtube/channel'),
+    getVideos: (params?: { page?: number; limit?: number; sort?: string; search?: string; playlistId?: string; category?: string }) =>
+      apiRequest(`/youtube/videos${buildQuery(params)}`),
+    getVideoById: (videoId: string) => apiRequest(`/youtube/videos/${videoId}`),
+    getPlaylists: () => apiRequest('/youtube/playlists'),
+    getSyncStatus: () => apiRequest('/youtube/sync/status'),
+    triggerSync: () => apiRequest('/youtube/sync', { method: 'POST' }),
+    connectChannel: (channelInput: string) =>
+      apiRequest('/youtube/connect', {
+        method: 'POST',
+        body: JSON.stringify({ channel: channelInput, handle: channelInput, channelInput }),
+      }),
   },
 
   // Mentorship

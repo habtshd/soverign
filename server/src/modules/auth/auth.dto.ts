@@ -12,15 +12,22 @@ export const loginSchema = z
 
 export const registerSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
-  firstName: z.string().min(2),
-  lastName: z.string().min(2),
+  password: z.string().min(6),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  fullName: z.string().optional(),
   phone: z.string().optional(),
   occupation: z.string().optional(),
   city: z.string().optional(),
-  reasonToJoin: z.string().min(10),
+  location: z.string().optional(),
+  telegramUsername: z.string().optional(),
+  telegramHandle: z.string().optional(),
+  reasonToJoin: z.string().optional(),
+  source: z.string().optional(),
   membershipTypeCode: z.string().default('GENERAL'),
-});
+  responses: z.any().optional(),
+  responsesJson: z.any().optional(),
+}).passthrough();
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(6),

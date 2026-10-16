@@ -261,7 +261,7 @@ export const MemberHome: React.FC<MemberHomeProps> = ({ onNavigate }) => {
           </div>
 
           <DigitalMemberCard
-            memberNumber={member?.memberNumber || 'SOV-001'}
+            memberNumber={member?.memberNumber || 'MAN 001'}
             digitalIdCode={member?.digitalIdCode || 'SOV-ALPHA-001'}
             name={`${user?.firstName} ${user?.lastName}`}
             tier={member?.membershipType?.name || 'Sovereign Brother'}

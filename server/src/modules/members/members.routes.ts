@@ -14,6 +14,7 @@ router.get('/types', MembersController.getTypes);
 router.use(authenticateToken);
 
 router.get('/', requireRole('SUPER_ADMIN', 'ADMIN', 'ORGANIZER'), MembersController.getAll);
+router.post('/', requireRole('SUPER_ADMIN', 'ADMIN'), MembersController.create);
 router.get('/applications', requireRole('SUPER_ADMIN', 'ADMIN'), MembersController.getApplications);
 router.patch('/applications/:id/review', requireRole('SUPER_ADMIN', 'ADMIN'), MembersController.reviewApplication);
 router.post('/:id/verify', requireRole('SUPER_ADMIN', 'ADMIN'), MembersController.verifyMember);

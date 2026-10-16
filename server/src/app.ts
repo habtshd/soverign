@@ -16,6 +16,12 @@ import financeRoutes from './modules/finance/finance.routes.js';
 import notificationsRoutes from './modules/notifications/notifications.routes.js';
 import integrationsRoutes from './modules/integrations/integrations.routes.js';
 import adminRoutes from './modules/admin/admin.routes.js';
+import youtubeRoutes from './modules/youtube/youtube.routes.js';
+
+// BigInt JSON serialization patch for Prisma
+(BigInt.prototype as any).toJSON = function () {
+  return Number(this);
+};
 
 export function createApp() {
   const app = express();
@@ -29,6 +35,8 @@ export function createApp() {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  // Raw/Text parsing for YouTube PubSubHubbub Atom XML push webhook
+  app.use(express.text({ type: ['application/atom+xml', 'text/xml', 'application/xml'] }));
 
   // Health check
   app.get('/api/health', (req, res) => {
@@ -38,6 +46,10 @@ export function createApp() {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // YouTube Synchronization Module (Mounted at both /api/youtube and /api/v1/youtube)
+  app.use('/api/youtube', youtubeRoutes);
+  app.use('/api/v1/youtube', youtubeRoutes);
 
   // API v1 Domain Routes
   app.use('/api/v1/auth', authRoutes);
@@ -59,3 +71,4 @@ export function createApp() {
 
   return app;
 }
+

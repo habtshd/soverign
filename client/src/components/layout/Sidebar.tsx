@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext.js';
 import { Avatar } from '../common/Avatar.js';
+import { formatMemberId } from '../../utils/formatters.js';
 import {
   Shield,
   Home,
@@ -38,14 +39,38 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) => {
-  const { user, activePortal, logout } = useAuth();
+  const { user, activePortal, setActivePortal, logout } = useAuth();
+  const isAdmin = user?.roles?.includes('SUPER_ADMIN') || user?.roles?.includes('ADMIN');
 
   const renderNavItems = () => {
     switch (activePortal) {
       case 'ADMIN':
         return (
           <>
-            <div className="nav-section-title">Admin</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '12px' }}>
+              <div className="nav-section-title">Admin</div>
+              <button
+                type="button"
+                onClick={() => setActivePortal('MEMBER')}
+                title="Switch to Brotherhood view"
+                style={{
+                  background: 'rgba(212, 175, 55, 0.08)',
+                  border: '1px solid rgba(212, 175, 55, 0.2)',
+                  color: 'var(--text-gold)',
+                  borderRadius: '6px',
+                  padding: '2px 8px',
+                  fontSize: '0.68rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  marginBottom: '8px',
+                }}
+              >
+                <span>Brotherhood ↗</span>
+              </button>
+            </div>
             <button
               className={`nav-item ${currentTab === 'admin-dashboard' ? 'active' : ''}`}
               onClick={() => setCurrentTab('admin-dashboard')}
@@ -244,7 +269,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
       default:
         return (
           <>
-            <div className="nav-section-title">Brotherhood</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '12px' }}>
+              <div className="nav-section-title">Brotherhood</div>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setActivePortal('ADMIN')}
+                  title="Switch to Council Admin view"
+                  style={{
+                    background: 'rgba(212, 175, 55, 0.12)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    color: 'var(--text-gold)',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    fontSize: '0.68rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <Shield size={10} />
+                  <span>Admin ↗</span>
+                </button>
+              )}
+            </div>
             <button
               className={`nav-item ${currentTab === 'member-home' ? 'active' : ''}`}
               onClick={() => setCurrentTab('member-home')}
@@ -357,7 +408,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab }) =
               {user ? `${user.firstName} ${user.lastName}` : 'Guest Brother'}
             </div>
             <div className="sidebar-user-role">
-              {user?.memberNumber || user?.roles?.[0] || 'VERIFIED'}
+              {user?.memberNumber ? formatMemberId(user.memberNumber) : user?.roles?.[0] || 'VERIFIED'}
             </div>
           </div>
         </div>

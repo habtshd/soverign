@@ -1,6 +1,7 @@
 import prisma from '../../config/database.js';
 import { AppError } from '../../middleware/errorHandler.js';
 import { logAuditEvent } from '../../middleware/audit.js';
+import bcrypt from 'bcryptjs';
 
 export class MembersService {
   static async getAllMembers(params: {
@@ -232,7 +233,11 @@ export class MembersService {
       throw new AppError('An application with this email is already under review', 400);
     }
 
-    return prisma.memberApplication.create({
+    const serializedResponses = data.responsesJson 
+      ? (typeof data.responsesJson === 'string' ? data.responsesJson : JSON.stringify(data.responsesJson))
+      : (data.responses ? JSON.stringify(data.responses) : null);
+
+    return (prisma.memberApplication as any).create({
       data: {
         fullName: data.fullName,
         email: data.email.toLowerCase(),
@@ -243,6 +248,7 @@ export class MembersService {
         reasonToJoin: data.reasonToJoin,
         source: data.source || 'DIRECT',
         status: 'SUBMITTED',
+        responsesJson: serializedResponses,
       },
     });
   }
@@ -308,5 +314,107 @@ export class MembersService {
         _count: { select: { members: true } },
       },
     });
+  }
+
+  static async createMember(data: any, createdByUserId: string) {
+    if (!data.email) {
+      throw new AppError('Email address is required', 400);
+    }
+    const existing = await prisma.user.findUnique({
+      where: { email: data.email.toLowerCase().trim() },
+    });
+    if (existing) {
+      throw new AppError('A user with this email address already exists in the registry', 409);
+    }
+
+    const password = data.password?.trim() || 'Sovereign2026!';
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const memberRole = await prisma.role.findFirst({
+      where: { name: 'MEMBER' },
+    });
+
+    let membershipType: any = null;
+    if (data.membershipTypeId) {
+      membershipType = await prisma.membershipType.findUnique({ where: { id: data.membershipTypeId } });
+    } else if (data.membershipTypeCode) {
+      membershipType = await prisma.membershipType.findFirst({ where: { code: data.membershipTypeCode } });
+    }
+    if (!membershipType) {
+      membershipType = await prisma.membershipType.findFirst({ where: { isActive: true } });
+    }
+    if (!membershipType) {
+      throw new AppError('No valid membership tier found in system', 400);
+    }
+
+    const memberCount = await prisma.member.count();
+    const nextNum = memberCount + 1;
+    const memberNumber = `MAN ${String(nextNum).padStart(3, '0')}`;
+    const digitalIdCode = `MAN-${String(nextNum).padStart(3, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    let fName = data.firstName?.trim() || '';
+    let lName = data.lastName?.trim() || '';
+    if (!fName && data.fullName) {
+      const parts = data.fullName.trim().split(/\s+/);
+      fName = parts[0] || 'Brother';
+      lName = parts.slice(1).join(' ') || 'Sovereign';
+    }
+    fName = fName || 'Brother';
+    lName = lName || 'Sovereign';
+
+    const newMember = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: data.email.toLowerCase().trim(),
+          passwordHash,
+          firstName: fName,
+          lastName: lName,
+          phone: data.phone || null,
+          status: data.status || 'ACTIVE',
+          roles: memberRole ? {
+            create: [{ roleId: memberRole.id }],
+          } : undefined,
+        },
+      });
+
+      const member = await tx.member.create({
+        data: {
+          userId: user.id,
+          memberNumber,
+          membershipTypeId: membershipType.id,
+          status: data.status || 'ACTIVE',
+          digitalIdCode,
+          badgeTier: data.badgeTier || 'STANDARD',
+          qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${digitalIdCode}`,
+          profile: {
+            create: {
+              city: data.city || 'Addis Ababa',
+              country: data.country || 'Ethiopia',
+              profession: data.profession || data.occupation || 'Professional',
+              company: data.company || null,
+              telegramHandle: data.telegramHandle || null,
+              bio: data.bio || 'Active Sovereign Brother dedicated to discipline and leadership.',
+            },
+          },
+        },
+        include: {
+          user: true,
+          membershipType: true,
+          profile: true,
+        },
+      });
+
+      return member;
+    });
+
+    await logAuditEvent({
+      userId: createdByUserId,
+      action: 'CREATE',
+      entity: 'Member',
+      entityId: newMember.id,
+      details: { email: data.email, memberNumber },
+    });
+
+    return newMember;
   }
 }

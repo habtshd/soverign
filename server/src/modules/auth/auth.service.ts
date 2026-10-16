@@ -10,12 +10,33 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 export class AuthService {
   static async login(identifier: string, password: string, ipAddress?: string, userAgent?: string) {
     const cleanId = identifier.trim();
+    const manMatch = cleanId.match(/^MAN[\s\-_#]*([0-9]+)$/i);
+    const numInt = manMatch ? parseInt(manMatch[1], 10) : null;
+    const pad3 = numInt !== null ? String(numInt).padStart(3, '0') : '';
+    const pad4 = numInt !== null ? String(numInt).padStart(4, '0') : '';
+
+    const possibleIds = [
+      cleanId,
+      cleanId.toLowerCase(),
+      cleanId.toUpperCase(),
+      ...(manMatch
+        ? [
+            `MAN ${pad3}`,
+            `MAN-${pad3}`,
+            `SOV-${pad3}`,
+            `SOV-${pad4}`,
+            `sp/meaza/${pad4}`,
+            `pr/habtemariam/${pad4}`,
+          ]
+        : []),
+    ];
+
     const user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: cleanId.toLowerCase() },
-          { member: { memberNumber: cleanId } },
-          { member: { digitalIdCode: cleanId } },
+          { member: { memberNumber: { in: possibleIds } } },
+          { member: { digitalIdCode: { in: possibleIds } } },
           { member: { profile: { telegramHandle: cleanId } } },
           { member: { profile: { telegramHandle: `@${cleanId}` } } },
         ],
@@ -143,8 +164,34 @@ export class AuthService {
     }
 
     const memberCount = await prisma.member.count();
-    const memberNumber = `SOV-${String(memberCount + 101).padStart(4, '0')}`;
-    const digitalIdCode = `SOV-MEMB-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const memberNumber = `MAN ${String(memberCount + 1).padStart(3, '0')}`;
+    const digitalIdCode = `MAN-${String(memberCount + 1).padStart(3, '0')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    // Normalize names
+    let fName = data.firstName?.trim();
+    let lName = data.lastName?.trim();
+    if (!fName && data.fullName) {
+      const parts = data.fullName.trim().split(/\s+/);
+      fName = parts[0] || 'Brother';
+      lName = parts.slice(1).join(' ') || 'Sovereign';
+    }
+    fName = fName || 'Brother';
+    lName = lName || 'Sovereign';
+
+    const resp = data.responses || {};
+    const s1 = resp.section1_personal_info || {};
+    const s2 = resp.section2_reality_and_motivation || {};
+
+    const cityLoc = data.city || data.location || s1.q4_living_location || resp.q4_living || 'Addis Ababa, Ethiopia';
+    const profession = data.occupation || s1.q7_role || resp.q7_role || 'Member';
+    const telegram = data.telegramUsername || data.telegramHandle || s1.q6_telegram || resp.q6_telegram || null;
+    const phoneNum = data.phone || s1.q5_phone || resp.q5_phone || null;
+    const reason = data.reasonToJoin || s2.q10_why_join || resp.q10_why_join || 'Sovereign Brotherhood, Discipline & Leadership';
+    const sourceRef = data.source || s1.q9_referral_source || resp.q9_hear_about || 'DIRECT';
+
+    const serializedResponses = data.responsesJson 
+      ? (typeof data.responsesJson === 'string' ? data.responsesJson : JSON.stringify(data.responsesJson))
+      : (data.responses ? JSON.stringify(data.responses) : null);
 
     // Create user and member record in a transaction
     const newUser = await prisma.$transaction(async (tx) => {
@@ -152,9 +199,9 @@ export class AuthService {
         data: {
           email: data.email.toLowerCase(),
           passwordHash,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone,
+          firstName: fName,
+          lastName: lName,
+          phone: phoneNum,
           status: 'ACTIVE',
           roles: {
             create: [{ roleId: memberRole.id }],
@@ -172,8 +219,10 @@ export class AuthService {
           qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${digitalIdCode}`,
           profile: {
             create: {
-              profession: data.occupation,
-              city: data.city,
+              profession,
+              city: cityLoc,
+              telegramHandle: telegram,
+              bio: reason,
             },
           },
         },
@@ -183,18 +232,19 @@ export class AuthService {
         },
       });
 
-      // Also create an Application record for historical record
-      await tx.memberApplication.create({
+      // Also create an Application record with full 38-question dossier
+      await (tx.memberApplication as any).create({
         data: {
-          fullName: `${data.firstName} ${data.lastName}`,
+          fullName: `${fName} ${lName}`,
           email: data.email.toLowerCase(),
-          phone: data.phone,
-          occupation: data.occupation,
-          city: data.city,
-          reasonToJoin: data.reasonToJoin,
-          source: 'DIRECT',
+          phone: phoneNum,
+          occupation: profession,
+          city: cityLoc,
+          reasonToJoin: reason,
+          source: sourceRef,
           status: 'APPROVED',
-          reviewNotes: 'Auto-approved member portal onboarding.',
+          reviewNotes: 'Auto-approved via Sovereign Readiness Application.',
+          responsesJson: serializedResponses,
         },
       });
 
